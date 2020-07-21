@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.huzhihui.webdeploy.dao.DeployHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.github.huzhihui.webdeploy.entity.DeployHistory">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="endpoint_id" jdbcType="VARCHAR" property="endpointId" />
+    <result column="endpoint_name" jdbcType="VARCHAR" property="endpointName" />
+    <result column="project_id" jdbcType="VARCHAR" property="projectId" />
+    <result column="project_name" jdbcType="VARCHAR" property="projectName" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="describe" jdbcType="VARCHAR" property="describe" />
+    <result column="his_file_name" jdbcType="VARCHAR" property="hisFileName" />
+    <result column="oper_user_cname" jdbcType="VARCHAR" property="operUserCname" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="oper_log" jdbcType="LONGVARCHAR" property="operLog" />
+  </resultMap>
+  <update id="updateByPrimaryKey" parameterType="com.github.huzhihui.webdeploy.entity.DeployHistory">
+    update deploy_history
+    set endpoint_id = #{endpointId,jdbcType=VARCHAR},
+      endpoint_name = #{endpointName,jdbcType=VARCHAR},
+      project_id = #{projectId,jdbcType=VARCHAR},
+      project_name = #{projectName,jdbcType=VARCHAR},
+      `status` = #{status,jdbcType=INTEGER},
+      `describe` = #{describe,jdbcType=VARCHAR},
+      his_file_name = #{hisFileName,jdbcType=VARCHAR},
+      oper_user_cname = #{operUserCname,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      oper_log = #{operLog,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, endpoint_id, endpoint_name, project_id, project_name, `status`, `describe`, 
+    his_file_name, oper_user_cname, create_time, oper_log
+    from deploy_history
+  </select>
+</mapper>

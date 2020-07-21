@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.huzhihui.webdeploy.dao.EndpointMapper">
+  <resultMap id="BaseResultMap" type="com.github.huzhihui.webdeploy.entity.Endpoint">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="host" jdbcType="VARCHAR" property="host" />
+    <result column="port" jdbcType="INTEGER" property="port" />
+    <result column="terminal_num" jdbcType="VARCHAR" property="terminalNum" />
+    <result column="sign_key" jdbcType="VARCHAR" property="signKey" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <update id="updateByPrimaryKey" parameterType="com.github.huzhihui.webdeploy.entity.Endpoint">
+    update endpoint
+    set `name` = #{name,jdbcType=VARCHAR},
+      `host` = #{host,jdbcType=VARCHAR},
+      port = #{port,jdbcType=INTEGER},
+      terminal_num = #{terminalNum,jdbcType=VARCHAR},
+      sign_key = #{signKey,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, `name`, `host`, port, terminal_num, sign_key, create_time
+    from endpoint
+  </select>
+</mapper>

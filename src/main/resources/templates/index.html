@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>首页-前端发布系统</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/component/layui/css/layui.css"  media="all">
+    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+	    <div class="layui-logo" style="line-height: normal !important; width: 220px;">
+		    <div style="line-height: 60px;">前端发布系统</div>
+	    </div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item layui-this"><a href="/index">首页</a></li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <span th:text="${loginUser.userCname}"></span>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">没有了</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/logout">退了</a></li>
+        </ul>
+    </div>
+
+    <div style="padding: 15px 15px 0 15px;">
+        <div class="layui-form layui-form-pane">
+            <div class="layui-form-item" style="margin-bottom: 0px">
+	            <div class="layui-inline">
+		            <button class="layui-btn layui-btn-sm" id="add-page">新增部署</button>
+	            </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">项目</label>
+                    <div class="layui-input-inline">
+                        <select name="projectId" id="projectId" lay-filter="aihao">
+                            <option value=""></option>
+	                        <option th:each="project : ${projects}" th:value="${project.id}" th:text="${project.name}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layui-btn-sm" id="head-search">搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 内容主体区域 -->
+    <div style="padding: 0px 15px 15px 15px;">
+        <table id="main-list-table" lay-filter="main-list-table"></table>
+    </div>
+
+</div>
+<script type="text/html" id="listToolBar">
+	{{# if(d.status == 10){ }}
+	<a class="layui-btn layui-btn-danger layui-btn-sm" lay-event="close">发布失败</a>
+	{{# } }}
+	{{# if(d.status == 20){ }}
+	<a class="layui-btn layui-btn-sm" lay-event="rollback">回滚至当前版本</a>
+	{{# } }}
+</script>
+<script src="/component/layui/layui.all.js" charset="utf-8"></script>
+<script src="/component/jquery/jquery.min.js" charset="utf-8"></script>
+<script src="/js/api.js"></script>
+<script type="text/javascript" th:inline="none">
+    //JavaScript代码区域
+    layui.use('table', function(){
+        var table = layui.table;
+        var layer = layui.layer;
+        //第一个实例
+        table.render({
+            elem: '#main-list-table'
+            , height: "full-140"    //容器高度
+            ,cols: [[ //表头
+                {field: 'projectName', title: '项目', width:200}
+                ,{field: 'hisFileName', title: '历史文件', width:400}
+                ,{field: 'describe', title: '更新描述', width:200}
+                ,{field: 'operUserCname', title: '发布人', width:100}
+                ,{field: 'status', title: '结果', width:100 ,templet: function(d){
+                    if(d.status == 10){
+                        return '<span class="layui-badge">发布失败</span>';
+                    }else if(d.status == 20){
+                        return '<span class="layui-badge layui-bg-green">发布成功</span>';
+                    }
+                }}
+                ,{field: 'createTime', title: '发布时间', width:160}
+                ,{fixed: 'right', title: '操作', minWidth: '140', align: 'center', toolbar: '#listToolBar'}
+            ]]
+            ,url: '/deploy_history/page' //数据接口
+            ,request: {
+                pageName: 'pageNum' //页码的参数名称，默认：page
+                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            ,where: {
+                projectId: $('#projectId').val(),
+            }
+            ,response: {
+                statusName: "code" //数据状态的字段名称，默认：code
+                ,statusCode: 0 //成功的状态码，默认：0
+                ,msgName: 'codeMessage' //状态信息的字段名称，默认：msg
+                ,countName: 'count' //数据总数的字段名称，默认：count
+                ,dataName: 'data' //数据列表的字段名称，默认：data
+            }
+            , method: 'post'
+            , even: true
+            , page: true
+            , loading: true
+            , limits: [20, 30, 60]
+            , limit: 20 //默认采用10
+            , done: function (res, curr, count) {
+
+            }
+        });
+
+        table.on('tool(main-list-table)', function(obj){
+            var current_data = obj.data;
+            if(obj.event === 'rollback'){
+                layer.confirm('真的要退回至当前版本吗', function(index){
+                    layer.close(index);
+                    var in_data = {
+                        id:current_data.id,
+                    }
+                    _doRollback(in_data,function(){
+                        table.reload("main-list-table", {
+                            request: {
+                                pageName: 'currentPage' //页码的参数名称，默认：page
+                                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                            }
+                        })
+                    });
+                });
+            }
+        });
+
+        /**
+         * 回滚--ajax
+         * @param in_data
+         * @param callback
+         */
+        function _doRollback(in_data,callback){
+            $.ajax({
+                url: '/deploy/rollback',
+                type: "POST",
+                data: in_data,
+                beforeSend: function () {
+                    layerLoad = layer.load();
+                },
+                success: function (data) {
+                    layer.close(layerLoad);
+                    if (data.success) {
+                        layer.msg(data.codeMessage, {icon: 1});
+                        callback();
+                    } else {
+                        layer.msg(data.codeMessage, {icon: 2});
+                    }
+                },
+                error: function () {
+                    layer.close(layerLoad);
+                    layer.msg("网络开小差啦", {icon: 5});
+                }
+            });
+        }
+
+        /** 搜索--ajax */
+        $('#head-search').on('click', function(){
+            table.reload("main-list-table", {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                ,where: {
+                    projectId: $('#projectId').val(),
+                }
+            })
+        });
+
+        /** 打开新页面--新增用户 */
+        $('#add-page').on('click',function(){
+            showPage('新增发布任务','/deploy/add')
+        });
+
+    });
+
+</script>
+</body>
+</html>

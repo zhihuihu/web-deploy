@@ -1,0 +1,26 @@
+server:
+  port: 6001
+logging:
+  config: classpath:logback/logback-dev.xml
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.6.128:3306/web_deploy?useUnicode=true&characterEncoding=utf8&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Hongkong
+    username: huzhihui
+    password: huzhihui@2020
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      auto-commit: true
+      idle-timeout: 30000
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+#发布配置
+web-publish:
+  workspace-folder: /alidata/view/
+  temp-folder: /alidata/web-publish/history/
+  shell-folder: /alidata/web-publish/sh/
+  shell-file-name: web-publish.sh

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.huzhihui.webdeploy.dao.ProjectMapper">
+  <resultMap id="BaseResultMap" type="com.github.huzhihui.webdeploy.entity.Project">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="root_folder" jdbcType="VARCHAR" property="rootFolder" />
+    <result column="deploy_folder" jdbcType="VARCHAR" property="deployFolder" />
+    <result column="package_folder" jdbcType="VARCHAR" property="packageFolder" />
+    <result column="use_flag" jdbcType="INTEGER" property="useFlag" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <update id="updateByPrimaryKey" parameterType="com.github.huzhihui.webdeploy.entity.Project">
+    update project
+    set `name` = #{name,jdbcType=VARCHAR},
+      root_folder = #{rootFolder,jdbcType=VARCHAR},
+      deploy_folder = #{deployFolder,jdbcType=VARCHAR},
+      package_folder = #{packageFolder,jdbcType=VARCHAR},
+      use_flag = #{useFlag,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, `name`, root_folder, deploy_folder, package_folder, use_flag, create_time, 
+    update_time
+    from project
+  </select>
+</mapper>

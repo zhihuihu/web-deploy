@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.huzhihui.webdeploy.dao.OperLogMapper">
+  <resultMap id="BaseResultMap" type="com.github.huzhihui.webdeploy.entity.OperLog">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_cname" jdbcType="VARCHAR" property="userCname" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <update id="updateByPrimaryKey" parameterType="com.github.huzhihui.webdeploy.entity.OperLog">
+    update oper_log
+    set `desc` = #{desc,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      user_cname = #{userCname,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, `desc`, user_id, user_name, user_cname, create_time
+    from oper_log
+  </select>
+</mapper>
