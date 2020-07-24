@@ -77,12 +77,13 @@
 		</javaClientGenerator>
 
 		<!-- tableName:用于自动生成代码的数据库表；domainObjectName:对应于数据库表的javaBean类名 -->
-		<table tableName="user" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>
-		<table tableName="endpoint" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>
-		<table tableName="endpoint_project_rela" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>
-		<table tableName="project" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>
-		<table tableName="deploy_history" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>
-		<table tableName="oper_log" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>
+<!--		<table tableName="user" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>-->
+<!--		<table tableName="endpoint" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>-->
+<!--		<table tableName="endpoint_project_rela" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>-->
+<!--		<table tableName="project" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>-->
+<!--		<table tableName="deploy_history" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>-->
+		<table tableName="deploy_file" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>
+<!--		<table tableName="oper_log" enableInsert="false" enableDeleteByPrimaryKey="false" enableSelectByPrimaryKey="false"/>-->
 
 	</context>
 </generatorConfiguration>

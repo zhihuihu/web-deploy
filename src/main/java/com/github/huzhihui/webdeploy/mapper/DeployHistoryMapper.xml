@@ -10,6 +10,7 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="describe" jdbcType="VARCHAR" property="describe" />
     <result column="his_file_name" jdbcType="VARCHAR" property="hisFileName" />
+	  <result column="deploy_file_id" jdbcType="VARCHAR" property="deployFileId" />
     <result column="oper_user_cname" jdbcType="VARCHAR" property="operUserCname" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="oper_log" jdbcType="LONGVARCHAR" property="operLog" />
@@ -23,14 +24,15 @@
       `status` = #{status,jdbcType=INTEGER},
       `describe` = #{describe,jdbcType=VARCHAR},
       his_file_name = #{hisFileName,jdbcType=VARCHAR},
+      deploy_file_id = #{deployFileId,jdbcType=VARCHAR},
       oper_user_cname = #{operUserCname,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       oper_log = #{operLog,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, endpoint_id, endpoint_name, project_id, project_name, `status`, `describe`, 
-    his_file_name, oper_user_cname, create_time, oper_log
+    select id, endpoint_id, endpoint_name, project_id, project_name, `status`, `describe`,
+    his_file_name, deploy_file_id, oper_user_cname, create_time, oper_log
     from deploy_history
   </select>
 </mapper>
