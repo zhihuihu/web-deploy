@@ -20,7 +20,6 @@ spring:
       connection-test-query: SELECT 1
 #发布配置
 web-publish:
-  workspace-folder: /alidata/view/
   temp-folder: /alidata/web-publish/history/
   shell-folder: /alidata/web-publish/sh/
   shell-file-name: web-publish.sh

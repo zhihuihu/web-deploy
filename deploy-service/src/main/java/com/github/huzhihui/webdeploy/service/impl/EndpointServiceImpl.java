@@ -4,6 +4,8 @@
  */
 package com.github.huzhihui.webdeploy.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.github.huzhihui.webdeploy.common.utils.IdWorkerUtils;
 import com.github.huzhihui.webdeploy.dao.EndpointMapper;
 import com.github.huzhihui.webdeploy.entity.Endpoint;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author huzhihui
@@ -38,5 +41,20 @@ public class EndpointServiceImpl implements EndpointService {
     @Override
     public Endpoint getById(String id) {
         return endpointMapper.selectById(id);
+    }
+
+    @Override
+    public Endpoint getByTerminalNum(String terminalNum) {
+        LambdaQueryWrapper<Endpoint> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Endpoint::getTerminalNum,terminalNum);
+        return endpointMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public List<Endpoint> page(Integer useFlag,String search) {
+        LambdaQueryWrapper<Endpoint> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(null != useFlag,Endpoint::getUseFlag,useFlag);
+        queryWrapper.like(StringUtils.isNotEmpty(search),Endpoint::getName,search);
+        return endpointMapper.selectList(queryWrapper);
     }
 }

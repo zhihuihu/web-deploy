@@ -4,6 +4,7 @@
  */
 package com.github.huzhihui.webdeploy.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.huzhihui.webdeploy.common.enums.HttpCodeEnum;
 import com.github.huzhihui.webdeploy.common.utils.BusinessException;
 import com.github.huzhihui.webdeploy.common.utils.IdWorkerUtils;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -36,7 +38,7 @@ public class UserServiceImpl implements UserService {
         user.setCreateTime(new Date());
         user.setSalt(UUID.randomUUID().toString().replace("-",""));
         try{
-            user.setPassword(MD5Utils.MD5(user.getPassword()+user.getSalt()));
+            user.setPassword(MD5Utils.MD5(user.getPassword()+user.getSalt()).toUpperCase());
         }catch (Exception ex){
             throw new BusinessException(HttpCodeEnum.ERROR.getCode(),"MD5加密出错");
         }
@@ -49,7 +51,7 @@ public class UserServiceImpl implements UserService {
         if(!StringUtils.isEmpty(user.getPassword())){
             User oldUser = userMapper.selectById(user.getId());
             try{
-                user.setPassword(MD5Utils.MD5(user.getPassword()+oldUser.getSalt()));
+                user.setPassword(MD5Utils.MD5(user.getPassword()+oldUser.getSalt()).toUpperCase());
             }catch (Exception ex){
                 throw new BusinessException(HttpCodeEnum.ERROR.getCode(),"MD5加密出错");
             }
@@ -61,5 +63,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getById(String id) {
         return userMapper.selectById(id);
+    }
+
+    @Override
+    public List<User> page(String userName, String userCname) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.like(!StringUtils.isEmpty(userName),User::getUserName,userName);
+        queryWrapper.like(!StringUtils.isEmpty(userCname),User::getUserCname,userCname);
+        queryWrapper.orderByDesc(User::getCreateTime);
+        return userMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public User getByUserName(String userName) {
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(User::getUserName,userName);
+        return userMapper.selectOne(queryWrapper);
     }
 }

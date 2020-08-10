@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>任务用户</title>
+    <link rel="stylesheet" href="/component/layui/css/layui.css">
+</head>
+<body style="height: 100%;">
+
+<form class="layui-form layui-form-pane" action="">
+	<div class="layui-form-item">
+		<label class="layui-form-label">名称</label>
+		<div class="layui-input-block">
+			<input id="name" type="text" name="name"  class="layui-input " value="">
+		</div>
+	</div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">访问host</label>
+        <div class="layui-input-block">
+            <input id="host" type="text" name="host"  class="layui-input " value="">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">端口</label>
+        <div class="layui-input-block">
+            <input id="port" type="text" name="port"  class="layui-input " value="">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">终端号</label>
+        <div class="layui-input-block">
+            <input id="terminalNum" type="text" name="terminalNum"  class="layui-input " value="">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">签名秘钥</label>
+        <div class="layui-input-block">
+            <input id="signKey" type="text" name="signKey"  class="layui-input " value="">
+        </div>
+    </div>
+    <div class="layui-form-item" style="text-align: center">
+        <button class="layui-btn" lay-submit="" lay-filter="add-form-submit">确定</button>
+    </div>
+</form>
+</body>
+<script src="/component/jquery/jquery.min.js"></script>
+<script src="/component/layui/layui.all.js"></script>
+<script src="/js/api.js"></script>
+<script type="text/javascript">
+    layui.use('form', function(){
+        var form = layui.form
+            ,layer = layui.layer
+            ,laydate = layui.laydate
+            ,upload = layui.upload;
+        form.on('submit(add-form-submit)', function(data){
+            var jsonData = data.field;
+            if(!jsonData.name || jsonData.name == ''){
+                layer.msg("请输入名称", {icon: 2});
+                return false;
+            }
+            if(!jsonData.host || jsonData.host == ''){
+                layer.msg("请输入host", {icon: 2});
+                return false;
+            }
+            if(!jsonData.port || jsonData.port == ''){
+                layer.msg("请输入端口", {icon: 2});
+                return false;
+            }
+            if(!jsonData.terminalNum || jsonData.terminalNum == ''){
+                layer.msg("请输入终端号", {icon: 2});
+                return false;
+            }
+            if(!jsonData.signKey || jsonData.signKey == ''){
+                layer.msg("请输入签名秘钥", {icon: 2});
+                return false;
+            }
+            $.ajax({
+                url: '/endpoint/add',
+                type: "POST",
+                contentType: 'application/json',
+                data: JSON.stringify(jsonData),
+                beforeSend: function () {
+                    layerLoad = layer.load();
+                },
+                success: function (data) {
+                    layer.close(layerLoad);
+                    if (data.success) {
+                        layer.msg(data.codeMessage, {
+                            icon: 1,
+                            time: 2000
+                        }, function(){
+                            window.close();
+                            parent.location.reload();
+                        });
+                    } else {
+                        layer.msg(data.codeMessage, {icon: 2});
+                    }
+                },
+                error: function () {
+                    layer.close(layerLoad);
+                    layer.msg("网络开小差啦", {icon: 5});
+                }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+    });
+</script>
+</html>

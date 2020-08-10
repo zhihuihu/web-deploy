@@ -1,5 +1,6 @@
 package com.github.huzhihui.webdeploy.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,6 +27,7 @@ public class DeployHistory implements Serializable {
     private Integer status;
 
     /** 描述 | 表字段 describe */
+    @TableField(value = "`describe`")
     private String describe;
 
     /** 历史文件夹 | 表字段 his_file_name */

@@ -22,6 +22,9 @@ public class Endpoint implements Serializable {
     /** 参数签名秘钥 | 表字段 sign_key */
     private String signKey;
 
+    /** 状态  10：启用  20：禁用 */
+    private Integer useFlag;
+
     /**  | 表字段 create_time */
     private Date createTime;
 
@@ -87,5 +90,13 @@ public class Endpoint implements Serializable {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getUseFlag() {
+        return useFlag;
+    }
+
+    public void setUseFlag(Integer useFlag) {
+        this.useFlag = useFlag;
     }
 }

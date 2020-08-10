@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.github.huzhihui.webdeploy.entity.Project">
     <id column="id" jdbcType="VARCHAR" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+	  <result column="endpoint_id" jdbcType="VARCHAR" property="endpointId" />
     <result column="root_folder" jdbcType="VARCHAR" property="rootFolder" />
     <result column="deploy_folder" jdbcType="VARCHAR" property="deployFolder" />
     <result column="package_folder" jdbcType="VARCHAR" property="packageFolder" />
@@ -14,6 +15,7 @@
   <update id="updateByPrimaryKey" parameterType="com.github.huzhihui.webdeploy.entity.Project">
     update project
     set `name` = #{name,jdbcType=VARCHAR},
+    	endpoint_id = #{endpointId,jdbcType=VARCHAR},
       root_folder = #{rootFolder,jdbcType=VARCHAR},
       deploy_folder = #{deployFolder,jdbcType=VARCHAR},
       package_folder = #{packageFolder,jdbcType=VARCHAR},
@@ -23,7 +25,7 @@
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, `name`, root_folder, deploy_folder, package_folder, use_flag, create_time, 
+    select id, `name`, endpoint_id, root_folder, deploy_folder, package_folder, use_flag, create_time,
     update_time
     from project
   </select>

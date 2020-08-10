@@ -8,12 +8,19 @@ import com.github.huzhihui.webdeploy.common.utils.FileUtils;
 import com.github.huzhihui.webdeploy.common.utils.ResponseMessage;
 import com.github.huzhihui.webdeploy.entity.DeployFile;
 import com.github.huzhihui.webdeploy.service.inter.DeployFileService;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 /**
  * @author huzhihui
@@ -26,21 +33,15 @@ public class DeployFileController {
     @Autowired
     private DeployFileService deployFileService;
 
-    @RequestMapping(value = "uploadFile")
-    @ResponseBody
-    public ResponseMessage uploadFile(@RequestParam("file") MultipartFile file) throws Exception{
-        DeployFile deployFile = new DeployFile();
-        deployFile.setName(file.getOriginalFilename());
-        deployFile.setSource(file.getBytes());
-        deployFileService.add(deployFile);
-        return ResponseMessage.success(deployFile);
+    @RequestMapping(value = "download")
+    public void download(HttpServletResponse response, String id) throws Exception{
+        DeployFile deployFile = deployFileService.getById(id);
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("multipart/form-data");
+        response.setHeader("Content-Disposition", "attachment;fileName="+deployFile.getName());
+        ServletOutputStream out = response.getOutputStream();
+        InputStream input = new ByteArrayInputStream(deployFile.getSource());
+        IOUtils.copy(input, out);
     }
 
-    @RequestMapping(value = "exFile")
-    @ResponseBody
-    public ResponseMessage exFile(String id) throws Exception{
-        DeployFile deployFile = deployFileService.getById(id);
-        FileUtils.getFileByBytes(deployFile.getSource(),"D:/",deployFile.getName());
-        return ResponseMessage.success(deployFile);
-    }
 }

@@ -71,7 +71,7 @@
             formData.append("describe",jsonData.describe);
             formData.append("file",$("#file")[0].files[0]);
             $.ajax({
-                url: '/deploy/add/submit',
+                url: '/deploy/add',
                 type: "POST",
                 data: formData,
                 contentType: false,

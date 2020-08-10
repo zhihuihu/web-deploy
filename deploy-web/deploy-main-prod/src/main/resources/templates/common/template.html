@@ -1,0 +1,28 @@
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<body>
+<div th:fragment="logo" class="layui-logo" style="line-height: normal !important; width: 220px;">
+    <div style="line-height: 60px;">前端发布系统</div>
+</div>
+<ul th:fragment="page-name" class="layui-nav layui-layout-left">
+    <li class="layui-nav-item" th:classappend="${page == 'index' ? 'layui-this':'' }"><a href="/index">首页</a></li>
+    <li class="layui-nav-item" th:classappend="${page == 'deploy/index' ? 'layui-this':'' }"><a href="/deploy/index">发布管理</a></li>
+    <li class="layui-nav-item" th:classappend="${page == 'project/index' ? 'layui-this':'' }"><a href="/project/index">项目管理</a></li>
+    <li class="layui-nav-item" th:classappend="${page == 'endpoint/index' ? 'layui-this':'' }"><a href="/endpoint/index">终端管理</a></li>
+    <li class="layui-nav-item" th:classappend="${page == 'user/index' ? 'layui-this':'' }"><a href="/user/index">用户管理</a></li>
+</ul>
+<li th:fragment="header-endpoint" class="layui-nav-item">
+    <div class="layui-form">
+        <div class="layui-form-item" style="margin-bottom: 0px">
+            <div class="layui-inline">
+                <label class="layui-form-label">当前终端</label>
+                <div class="layui-input-inline" style="color: #000;">
+                    <select name="header-endpoint" id="header-endpoint" lay-filter="header-endpoint">
+                        <option th:each="endpoint : ${T(com.github.huzhihui.webdeploy.main.handler.ThymeleafPageHandler).buildEndpointSelect()}" th:value="${endpoint.id}" th:text="${endpoint.name}" th:selected="${endpoint.selected}"></option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+</body>
+</html>

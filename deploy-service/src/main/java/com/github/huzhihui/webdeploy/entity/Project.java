@@ -10,6 +10,9 @@ public class Project implements Serializable {
     /** 项目名称 | 表字段 name */
     private String name;
 
+    /** 终端ID */
+    private String endpointId;
+
     /** 根目录 | 表字段 root_folder */
     private String rootFolder;
 
@@ -98,5 +101,13 @@ public class Project implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getEndpointId() {
+        return endpointId;
+    }
+
+    public void setEndpointId(String endpointId) {
+        this.endpointId = endpointId;
     }
 }

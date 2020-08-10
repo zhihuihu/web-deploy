@@ -14,11 +14,11 @@
     <form class="layui-form" id="login-form" action="">
         <h2 style="padding-bottom: 15px;">后台登录</h2>
         <div class="layui-input-inline">
-            <input type="text" name="userName" required lay-verify="required" placeholder="用户名" autocomplete="off"
+            <input type="text" value="admin" name="userName" required lay-verify="required" placeholder="用户名" autocomplete="off"
                    class="layui-input">
         </div>
         <div class="layui-input-inline">
-            <input type="password" name="password" required lay-verify="required" placeholder="密码" autocomplete="off"
+            <input type="password" value="123456" name="password" required lay-verify="required" placeholder="密码" autocomplete="off"
                    class="layui-input">
         </div>
         <div class="layui-input-inline login-btn">
@@ -30,6 +30,7 @@
 </body>
 <script src="/component/layui/layui.all.js" charset="utf-8"></script>
 <script src="/component/jquery/jquery.min.js" charset="utf-8"></script>
+<script src="/component/common/md5.min.js" charset="utf-8"></script>
 <script src="/js/api.js"></script>
 <script type="text/javascript">
     layui.use('form', function(){
@@ -39,10 +40,10 @@
         form.on('submit(login-form-submit)', function(data){
             console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
             $.ajax({
-                url: 'login/submit',
+                url: 'login/verification',
                 type: "POST",
                 dataType: "json",
-                data: {userName:data.field.userName,password:data.field.password},
+                data: {userName:data.field.userName,password:md5(data.field.password)},
                 beforeSend: function () {
                     layerLoad = layer.load();
                 },
