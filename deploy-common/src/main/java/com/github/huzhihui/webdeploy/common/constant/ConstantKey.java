@@ -13,5 +13,7 @@ public class ConstantKey {
     /** 主端点 */
     public static final String master_terminal_num = "master";
     /** 终端状态监测URL */
-    public static final String ENDPOINT_CHECK_URL = "/check/state";
+    public static final String ENDPOINT_CHECK_URL = "/heart/check/state";
+    /** 终端发布URL */
+    public static final String ENDPOINT_DEPLOY_URL = "/deploy/add";
 }

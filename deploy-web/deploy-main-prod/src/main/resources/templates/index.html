@@ -63,6 +63,7 @@
     layui.use('table', function(){
         var table = layui.table;
         var layer = layui.layer;
+        var form = layui.form;
         //第一个实例
         table.render({
             elem: '#main-list-table'
@@ -124,18 +125,18 @@
             elem: '#deploy-list-table'
             , height: "full-105"    //容器高度
             ,cols: [[ //表头
-                {field: 'endpointName', title: '归属终端', width:100}
-                ,{field: 'projectName', title: '项目名称', width:100}
-                ,{field: 'describe', title: '更新描述', width:100}
-                ,{field: 'operUserCname', title: '发布人', width:100}
-                ,{field: 'status', title: '结果', width:100 ,templet: function(d){
+                {field: 'endpointName', title: '归属终端', minWidth:100}
+                ,{field: 'projectName', title: '项目名称', minWidth:100}
+                ,{field: 'describe', title: '更新描述', minWidth:100}
+                ,{field: 'operUserCname', title: '发布人', minWidth:100}
+                ,{field: 'status', title: '结果', minWidth:100 ,templet: function(d){
                         if(d.status == 10){
                             return '<span class="layui-badge">发布失败</span>';
                         }else if(d.status == 20){
                             return '<span class="layui-badge layui-bg-green">发布成功</span>';
                         }
                     }}
-                ,{field: 'createTime', title: '发布时间', width:160}
+                ,{field: 'createTime', title: '发布时间', minWidth:160}
             ]]
             ,url: '/index/latestDeploy' //数据接口
             ,request: {
@@ -175,8 +176,33 @@
             })
         });
 
-    });
+        form.on('select(header-endpoint)', function(data){
+            var jsonStr = {
+                endpointId: data.value
+            }
+            $.ajax({
+                url: '/index/changeEndpoint',
+                type: "POST",
+                data: jsonStr,
+                beforeSend: function () {
+                    layerLoad = layer.load();
+                },
+                success: function (data) {
+                    layer.close(layerLoad);
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        layer.msg(data.codeMessage, {icon: 2});
+                    }
+                },
+                error: function () {
+                    layer.close(layerLoad);
+                    layer.msg("网络开小差啦", {icon: 5});
+                }
+            });
+        });
 
+    });
 </script>
 </body>
 </html>

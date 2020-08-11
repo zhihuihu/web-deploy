@@ -7,6 +7,7 @@ package com.github.huzhihui.webdeploy.main.controller;
 import com.github.huzhihui.webdeploy.common.constant.ConstantKey;
 import com.github.huzhihui.webdeploy.common.enums.EndpointEnums;
 import com.github.huzhihui.webdeploy.common.enums.ProjectEnums;
+import com.github.huzhihui.webdeploy.common.utils.AssertUtils;
 import com.github.huzhihui.webdeploy.common.utils.ResponseMessage;
 import com.github.huzhihui.webdeploy.common.utils.SignUtils;
 import com.github.huzhihui.webdeploy.entity.DeployHistory;
@@ -14,6 +15,7 @@ import com.github.huzhihui.webdeploy.entity.Endpoint;
 import com.github.huzhihui.webdeploy.entity.Project;
 import com.github.huzhihui.webdeploy.main.dto.EndpointSelectResultDto;
 import com.github.huzhihui.webdeploy.main.dto.EndpointStatusDto;
+import com.github.huzhihui.webdeploy.main.dto.UserInfo;
 import com.github.huzhihui.webdeploy.main.handler.EndpointHandler;
 import com.github.huzhihui.webdeploy.main.interceptor.permission.Permission;
 import com.github.huzhihui.webdeploy.main.utils.SessionUtils;
@@ -94,7 +96,7 @@ public class IndexController {
                 params.add("sign", sign);
                 HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<MultiValueMap<String, String>>(params, headers);
                 ResponseEntity<String> response = restTemplate.exchange(endpoint.getHost()+":"+endpoint.getPort()+ ConstantKey.ENDPOINT_CHECK_URL, HttpMethod.POST, requestEntity, String.class);
-                log.info("调用微信模板消息发送结果：" + response.getBody());
+                log.info("服务器根节点状态：" + response.getBody());
             }catch (Exception ex){
                 endpointStatusDto.setRun(false);
             }
@@ -119,6 +121,24 @@ public class IndexController {
         List<DeployHistory> deployHistories = deployHistoryService.page(null,null);
         PageInfo pageInfo = new PageInfo(deployHistories);
         return ResponseMessage.success(pageInfo);
+    }
+
+    /**
+     * 终端变更
+     * @param endpointId
+     * @return
+     */
+    @Permission
+    @RequestMapping(value = "index/changeEndpoint")
+    @ResponseBody
+    public ResponseMessage changeEndpoint(String endpointId){
+        Endpoint endpoint = endpointService.getById(endpointId);
+        AssertUtils.isNotNull(log,endpoint,"终端不存在");
+        UserInfo userInfo = SessionUtils.getUserInfo();
+        userInfo.setEndpointId(endpoint.getId());
+        userInfo.setEndpointName(endpoint.getName());
+        SessionUtils.setUserInfo(userInfo);
+        return ResponseMessage.success();
     }
 
 }

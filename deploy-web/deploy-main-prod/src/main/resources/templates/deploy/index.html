@@ -55,6 +55,9 @@
 
 </div>
 <script type="text/html" id="listToolBar">
+    {{# if(d.status == 10){ }}
+    <a class="layui-btn layui-btn-sm layui-btn-danger" lay-event="error">发布失败</a>
+    {{# } }}
 	{{# if(d.status == 20){ }}
 	<a class="layui-btn layui-btn-sm" lay-event="rollback">回滚版本</a>
 	{{# } }}
@@ -75,7 +78,7 @@
             ,cols: [[ //表头
                 {field: 'endpointName', title: '终端名称', minWidth:100}
                 ,{field: 'projectName', title: '项目名称', minWidth:100}
-                ,{field: 'status', title: '状态', width:60 ,templet: function(d){
+                ,{field: 'status', title: '状态', width:70 ,templet: function(d){
                     if(d.status == 10){
                         return '<span class="layui-badge ">失败</span>';
                     }else if(d.status == 20){

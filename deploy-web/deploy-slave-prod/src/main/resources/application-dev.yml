@@ -1,0 +1,11 @@
+server:
+  port: 6002
+logging:
+  config: classpath:logback/logback-dev.xml
+#发布配置
+web-publish:
+  temp-folder: /alidata/web-publish/history/
+  shell-folder: /alidata/web-publish/sh/
+  shell-file-name: web-publish.sh
+  terminal-num: slave_6_1
+  sign-key: 1111111

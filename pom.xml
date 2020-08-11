@@ -81,6 +81,11 @@
 				<artifactId>pagehelper-spring-boot-starter</artifactId>
 				<version>${pagehelper.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.2.73</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

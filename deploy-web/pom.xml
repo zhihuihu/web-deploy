@@ -11,6 +11,7 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>deploy-main-prod</module>
+		<module>deploy-slave-prod</module>
 	</modules>
 
 	<artifactId>deploy-web</artifactId>

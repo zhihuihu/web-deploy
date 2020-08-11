@@ -74,6 +74,8 @@ public class ProjectController {
     @RequestMapping(value = "add")
     @ResponseBody
     public ResponseMessage add(@RequestBody Project project){
+        UserInfo userInfo = SessionUtils.getUserInfo();
+        project.setEndpointId(userInfo.getEndpointId());
         projectService.add(project);
         return ResponseMessage.success();
     }

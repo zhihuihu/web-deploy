@@ -4,12 +4,14 @@
  */
 package com.github.huzhihui.webdeploy.main.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.huzhihui.webdeploy.common.constant.ConstantKey;
+import com.github.huzhihui.webdeploy.common.dto.SlaveDeployDto;
+import com.github.huzhihui.webdeploy.common.dto.SlaveDeployResultDto;
 import com.github.huzhihui.webdeploy.common.enums.DeployHistoryEnums;
 import com.github.huzhihui.webdeploy.common.enums.ProjectEnums;
-import com.github.huzhihui.webdeploy.common.utils.AssertUtils;
-import com.github.huzhihui.webdeploy.common.utils.FileUtils;
-import com.github.huzhihui.webdeploy.common.utils.ResponseMessage;
+import com.github.huzhihui.webdeploy.common.utils.*;
 import com.github.huzhihui.webdeploy.entity.DeployFile;
 import com.github.huzhihui.webdeploy.entity.DeployHistory;
 import com.github.huzhihui.webdeploy.entity.Endpoint;
@@ -26,17 +28,23 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,6 +68,8 @@ public class DeployController {
     private WebPublishProperties webPublishProperties;
     @Autowired
     private EndpointService endpointService;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Permission
     @RequestMapping(value = "index")
@@ -116,6 +126,10 @@ public class DeployController {
         String tempName = UUID.randomUUID().toString();
         String fileName = tempName+suffix;
         String filePath = webPublishProperties.getTempFolder();
+        File dir = new File(filePath);
+        if (!dir.exists() && dir.isDirectory()) {
+            dir.mkdirs();
+        }
         File dest = new File(filePath + fileName);
 
         // 文件保存
@@ -146,8 +160,7 @@ public class DeployController {
                 file.transferTo(dest);
                 this.executeShell(project.getDeployFolder(),suffix,tempName,fileName,webPublishProperties.getShellFolder(),webPublishProperties.getShellFileName(),project.getRootFolder(),webPublishProperties.getTempFolder(),project.getPackageFolder(),deployHistory);
             }else{
-                // 其他节点发布
-
+                this.deploySlaveEndpoint(project, endpoint, suffix, tempName, fileName, deployFile, deployHistory);
             }
             log.debug("执行完成");
         }catch (Exception ex){
@@ -158,6 +171,56 @@ public class DeployController {
             return ResponseMessage.failure("发布失败");
         }
         return ResponseMessage.success();
+    }
+
+    /**
+     * 发布其他节点
+     * @param project
+     * @param endpoint
+     * @param suffix
+     * @param tempName
+     * @param fileName
+     * @param deployFile
+     * @param deployHistory
+     * @throws Exception
+     */
+    private void deploySlaveEndpoint(Project project, Endpoint endpoint, String suffix, String tempName, String fileName, DeployFile deployFile, DeployHistory deployHistory) throws Exception {
+        String timeStamp = System.currentTimeMillis() + "";
+        String terminalNum = endpoint.getTerminalNum();
+        String sign = SignUtils.sign(new HashMap<String,String>(){{
+            put("timeStamp",timeStamp);
+            put("terminalNum",terminalNum);
+        }},endpoint.getSignKey(),SignUtils.HMACSHA256);
+        // 其他节点发布
+        FileSystemResource resource = new FileSystemResource(FileUtils.getTempFileByBytes(deployFile.getSource(),tempName,suffix));
+        // 然后所有参数要封装到MultiValueMap里面
+        MultiValueMap<String, Object> param = new LinkedMultiValueMap<>();
+        param.add("file", resource);
+        param.add("timeStamp", timeStamp);
+        param.add("terminalNum", terminalNum);
+        param.add("sign", sign);
+        SlaveDeployDto slaveDeployDto = new SlaveDeployDto();
+        slaveDeployDto.setProjectName(project.getName());
+        slaveDeployDto.setRootFolder(project.getRootFolder());
+        slaveDeployDto.setDeployFolder(project.getDeployFolder());
+        slaveDeployDto.setPackageFolder(project.getPackageFolder());
+        slaveDeployDto.setFileName(fileName);
+        param.add("jsonStr", JackSonUtils.objectToJsonStr(slaveDeployDto));
+        // 调用接口即可
+        ResponseEntity<String> response = restTemplate.postForEntity(endpoint.getHost()+":"+endpoint.getPort()+ ConstantKey.ENDPOINT_DEPLOY_URL, param, String.class);
+        JSONObject jsonObject = JSON.parseObject(response.getBody());
+        if(jsonObject.getBoolean("success")){
+            SlaveDeployResultDto slaveDeployResultDto = JSONObject.parseObject(jsonObject.getString("data"),SlaveDeployResultDto.class);
+            deployHistory.setOperLog(slaveDeployResultDto.getOperLog());
+            if(slaveDeployResultDto.getResult()){
+                deployHistory.setStatus(DeployHistoryEnums.STATUS.SUCCESS.getValue());
+            }else{
+                deployHistory.setStatus(DeployHistoryEnums.STATUS.FAIL.getValue());
+            }
+        }else{
+            deployHistory.setStatus(DeployHistoryEnums.STATUS.FAIL.getValue());
+            deployHistory.setOperLog(jsonObject.getString("codeMessage"));
+        }
     }
 
     /**

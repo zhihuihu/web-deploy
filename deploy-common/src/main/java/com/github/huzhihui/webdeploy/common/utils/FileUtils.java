@@ -53,4 +53,41 @@ public class FileUtils {
             }
         }
     }
+
+    /**
+     * 获取临时文件
+     * @param bytes
+     * @param prefix
+     * @param suffix
+     * @return
+     */
+    public static File getTempFileByBytes(byte[] bytes,String prefix, String suffix){
+        BufferedOutputStream bos = null;
+        FileOutputStream fos = null;
+        File file = null;
+        try {
+            file = File.createTempFile(prefix,suffix);
+            fos = new FileOutputStream(file);
+            bos = new BufferedOutputStream(fos);
+            bos.write(bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return file;
+    }
 }
