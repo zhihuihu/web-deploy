@@ -1,7 +1,8 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <body>
 <div th:fragment="logo" class="layui-logo" style="line-height: normal !important; width: 220px;">
-    <div style="line-height: 60px;">前端发布系统</div>
+    <div style="line-height: 30px;">前端发布系统</div>
+    <div style="line-height: 30px;" th:text="${session.userInfo.endpointName}"></div>
 </div>
 <ul th:fragment="page-name" class="layui-nav layui-layout-left">
     <li class="layui-nav-item" th:classappend="${page == 'index' ? 'layui-this':'' }"><a href="/index">首页</a></li>
