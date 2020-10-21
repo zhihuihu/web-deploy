@@ -136,7 +136,12 @@
                 });
             }
             if(obj.event === 'download'){
+              if(!current_data.deployFileId || current_data.deployFileId == ''){
+                layer.msg("未找到该版本发布文件", {icon: 2});
+                return;
+              }else{
                 window.open("/deploy/file/download?id="+current_data.deployFileId);
+              }
             }
         });
 

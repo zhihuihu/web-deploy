@@ -271,7 +271,7 @@ public class DeployController {
                 this.executeShell(project.getDeployFolder(),suffix,tempName,fileName,webPublishProperties.getShellFolder(),webPublishProperties.getShellFileName(),project.getRootFolder(),webPublishProperties.getTempFolder(),project.getPackageFolder(),deployHistory);
             }else{
                 // 其他节点发布
-
+                this.deploySlaveEndpoint(project, endpoint, suffix, tempName, fileName, deployFile, deployHistory);
             }
             log.debug("执行完成");
         }catch (Exception ex){
