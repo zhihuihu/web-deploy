@@ -1,15 +1,15 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <body>
 <div th:fragment="logo" class="layui-logo" style="line-height: normal !important; width: 220px;">
-    <div style="line-height: 30px;">前端发布系统</div>
-    <div style="line-height: 30px;" th:text="${session.userInfo.endpointName}"></div>
+    <div style="line-height: 30px; font-weight: 600; color: white">前端发布系统</div>
+    <div style="line-height: 30px; font-weight: 600; color: white" th:text="${session.userInfo.endpointName}"></div>
 </div>
 <ul th:fragment="page-name" class="layui-nav layui-layout-left">
-    <li class="layui-nav-item" th:classappend="${page == 'index' ? 'layui-this':'' }"><a href="/index">首页</a></li>
-    <li class="layui-nav-item" th:classappend="${page == 'deploy/index' ? 'layui-this':'' }"><a href="/deploy/index">发布管理</a></li>
-    <li class="layui-nav-item" th:classappend="${page == 'project/index' ? 'layui-this':'' }"><a href="/project/index">项目管理</a></li>
-    <li class="layui-nav-item" th:classappend="${page == 'endpoint/index' ? 'layui-this':'' }"><a href="/endpoint/index">终端管理</a></li>
-    <li class="layui-nav-item" th:classappend="${page == 'user/index' ? 'layui-this':'' }"><a href="/user/index">用户管理</a></li>
+    <li class="layui-nav-item" th:classappend="${#httpServletRequest.servletPath == '/index' ? 'layui-this':'' }"><a href="/index">首页</a></li>
+    <li class="layui-nav-item" th:classappend="${#httpServletRequest.servletPath == '/deploy/index' ? 'layui-this':'' }"><a href="/deploy/index">发布管理</a></li>
+    <li class="layui-nav-item" th:classappend="${#httpServletRequest.servletPath == '/project/index' ? 'layui-this':'' }"><a href="/project/index">项目管理</a></li>
+    <li class="layui-nav-item" th:classappend="${#httpServletRequest.servletPath == '/endpoint/index' ? 'layui-this':'' }"><a href="/endpoint/index">终端管理</a></li>
+    <li class="layui-nav-item" th:classappend="${#httpServletRequest.servletPath == '/user/index' ? 'layui-this':'' }"><a href="/user/index">用户管理</a></li>
 </ul>
 <li th:fragment="header-endpoint" class="layui-nav-item">
     <div class="layui-form">
